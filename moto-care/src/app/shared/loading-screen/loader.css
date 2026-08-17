@@ -1,0 +1,53 @@
+:host {
+    display: contents;
+}
+
+.logo {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(16, 21, 43, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.logo img {
+    width: 200px;
+    height: auto;
+}
+
+.image-pulse {
+    animation: pulse 3s ease-in-out infinite,
+        shimmer 3s infinite linear;
+    transform-origin: center;
+
+    mask-image: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.8) 50%, transparent 70%);
+    mask-size: 200% 100%;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        mask-position: 150% 0;
+    }
+
+    100% {
+        mask-position: -50% 0
+    }
+}

@@ -1,0 +1,61 @@
+<h2 mat-dialog-title class="font-bold text-[#10152b] m-0 border-b border-slate-100 pb-4">
+  Facturar Orden
+</h2>
+
+<mat-dialog-content class="pt-6">
+  <form [formGroup]="invoiceForm" class="flex flex-col gap-4">
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Método de Pago</mat-label>
+      <mat-select formControlName="idMethodPayment">
+        <mat-option [value]="1">Efectivo</mat-option>
+        <mat-option [value]="2">Tarjeta de Crédito/Débito</mat-option>
+        <mat-option [value]="3">Transferencia Bancaria</mat-option>
+        <mat-option [value]="4">Cheque</mat-option>
+      </mat-select>
+      @if (invoiceForm.get('idMethodPayment')?.hasError('required')) {
+      <mat-error>El método de pago es requerido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Referencia de Pago</mat-label>
+      <input matInput formControlName="paymentReference" placeholder="No. de voucher, transferencia, cheque, etc.">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Monto Entregado (Q)</mat-label>
+      <input matInput type="number" formControlName="amountReceived" placeholder="Monto que entrega el cliente">
+      @if (invoiceForm.get('amountReceived')?.hasError('required')) {
+      <mat-error>El monto entregado es requerido</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm mb-2 text-blue-800">
+      <div class="flex justify-between items-center font-bold">
+        <span>Total a Cobrar:</span>
+        <span>Q {{ totalEstimated | number:'1.2-2' }}</span>
+      </div>
+      @if (invoiceForm.get('amountReceived')?.value >= totalEstimated) {
+      <div class="flex justify-between items-center mt-2 pt-2 border-t border-blue-200">
+        <span>Cambio a devolver:</span>
+        <span class="font-bold">Q {{ (invoiceForm.get('amountReceived')?.value - totalEstimated) | number:'1.2-2' }}</span>
+      </div>
+      }
+    </div>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Nota Adicional</mat-label>
+      <textarea matInput formControlName="note" placeholder="Nota opcional para la factura" rows="2"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-6 pb-6 pt-0 border-t border-slate-100 mt-4 gap-2">
+  <button mat-button (click)="onCancel()" class="text-slate-500">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="invoiceForm.invalid || invoiceForm.get('amountReceived')?.value < totalEstimated"
+    [class]="(invoiceForm.invalid || invoiceForm.get('amountReceived')?.value < totalEstimated) ? 'bg-slate-300 text-slate-500' : 'bg-green-600 text-white hover:bg-green-700'">
+    Generar Factura
+  </button>
+</mat-dialog-actions>

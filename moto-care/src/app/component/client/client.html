@@ -1,0 +1,21 @@
+<div class="p-6 md:p-10 animate-fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-[#10152b]">Clientes</h1>
+        <p class="text-slate-500">Gestión del directorio de clientes y sus historiales</p>
+    </div>
+
+    <app-custom-table [data]="clients()" [columns]="tableColumns">
+        <ng-template appTableColumn="actions" let-client>
+            <div class="flex items-center gap-2">
+                <button mat-icon-button color="primary" class="!w-8 !h-8 bg-blue-500/10 hover:bg-blue-500/20"
+                    title="Ver Historial" (click)="goToDetail(client.idClient)">
+                    <mat-icon fontSet="material-symbols-outlined" class="text-sm">visibility</mat-icon>
+                </button>
+                <button mat-icon-button color="accent" class="!w-8 !h-8 bg-purple-500/10 hover:bg-purple-500/20"
+                    title="Editar">
+                    <mat-icon fontSet="material-symbols-outlined" class="text-sm">edit</mat-icon>
+                </button>
+            </div>
+        </ng-template>
+    </app-custom-table>
+</div>

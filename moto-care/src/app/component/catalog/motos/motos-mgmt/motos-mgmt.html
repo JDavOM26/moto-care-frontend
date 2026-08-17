@@ -1,0 +1,27 @@
+<div class="p-6 md:p-10 animate-fade-in">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-[#10152b]">Catálogo de Motocicletas</h1>
+      <p class="text-slate-500">Administración y visualización del catálogo de motocicletas</p>
+    </div>
+    <button mat-flat-button color="primary" class="!rounded-lg" (click)="openAddMotoDialog()">
+      <mat-icon>add</mat-icon>
+      Nueva Motocicleta
+    </button>
+  </div>
+
+  <app-custom-table [data]="motorcycles()" [columns]="tableColumns" class="block w-full">
+    
+    <ng-template appTableColumn="modelName" let-moto>
+      {{ moto.modelName }} <span class="text-slate-400 text-sm" *ngIf="moto.modelYear">({{ moto.modelYear }})</span>
+    </ng-template>
+
+    <ng-template appTableColumn="actions" let-moto>
+      <div class="flex items-center gap-3">
+        <button mat-icon-button class="!w-8 !h-8 bg-blue-500/10 hover:bg-blue-500/20" title="Editar" (click)="editMoto(moto)">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm text-blue-600">edit</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </app-custom-table>
+</div>

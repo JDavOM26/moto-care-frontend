@@ -1,0 +1,137 @@
+<div class="drawer-container" [class.open]="isOpen()">
+    <div class="drawer-overlay" (click)="close()"></div>
+    <div class="drawer-content">
+        <div class="drawer-header">
+            <h2 class="drawer-title">{{title()}}</h2>
+            <button class="drawer-close" (click)="close()">
+                <mat-icon fontSet="material-symbols-outlined">close</mat-icon>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form [formGroup]="myForm">
+
+                <div class="form-group">
+                    <label for="itemName">Nombre</label>
+                    <input type="text" id="itemName" formControlName="itemName">
+                </div>
+
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="form-group !mb-0">
+                        <label for="availableQuantity">Stock</label>
+                        <input type="number" id="availableQuantity" formControlName="availableQuantity">
+                    </div>
+                </div>
+
+                <div class="form-group mt-5">
+                    <label for="sku">SKU (Código del Producto)</label>
+                    <input type="text" id="sku" formControlName="sku">
+                    @if (myForm.get('sku')?.invalid && (myForm.get('sku')?.dirty || myForm.get('sku')?.touched)) {
+                    @if (myForm.get('sku')?.hasError('required')) {
+                    <p class="error-text">Este campo es obligatorio.</p>
+                    }
+                    @if (myForm.get('sku')?.hasError('maxlength')) {
+                    <p class="error-text">Máximo 50 caracteres.</p>
+                    }
+                    }
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-5">
+                    <div class="form-group !mb-0">
+                        <label for="purchasePrice">Precio de Compra</label>
+                        <input type="number" id="purchasePrice" formControlName="purchasePrice">
+                    </div>
+
+                    <div class="form-group !mb-0">
+                        <label for="salesPrice">Precio de Venta</label>
+                        <input type="number" id="salesPrice" formControlName="salesPrice">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-5">
+                    <div class="form-group !mb-0">
+                        <label for="maximumStock">Stock Máximo</label>
+                        <input type="number" id="maximumStock" formControlName="maximumStock">
+                    </div>
+
+                    <div class="form-group !mb-0">
+                        <label for="minimumStock">Stock Mínimo</label>
+                        <input type="number" id="minimumStock" formControlName="minimumStock">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="supplierSearch">Proveedor</label>
+                    <mat-select formControlName="idSupplier" (openedChange)="onSelectOpened($event)"
+                        placeholder="Seleccionar proveedor..."
+                        class="w-full py-2 px-3 text-sm text-[#10152b] border border-slate-300 rounded-lg bg-white outline-none">
+
+                        <mat-option disabled class="!p-0 !h-auto sticky top-0 bg-white z-10"
+                            style="opacity: 1; cursor: default; pointer-events: auto;">
+                            <div class="w-full p-2 border-b border-slate-100" style="pointer-events: auto;"
+                                (click)="$event.stopPropagation(); $event.preventDefault()">
+                                <input type="text" [formControl]="supplierSearchControl"
+                                    placeholder="Buscar por nombre..."
+                                    class="w-full py-2 px-3 border border-slate-300 rounded-md outline-none text-sm text-[#10152b]"
+                                    style="pointer-events: auto;" (keydown)="$event.stopPropagation()">
+                            </div>
+                        </mat-option>
+
+                        @if (providers().length === 0) {
+                        <mat-option disabled>No se encontraron resultados</mat-option>
+                        }
+
+                        @for (provider of providers(); track provider.id) {
+                        <mat-option [value]="provider.id">{{ provider.name }}</mat-option>
+                        }
+                    </mat-select>
+                </div>
+
+                <div class="form-group mt-5">
+                    <label for="categorySearch">Categoría</label>
+                    <mat-select formControlName="idCategory" (openedChange)="onCategorySelectOpened($event)"
+                        placeholder="Seleccionar categoría..."
+                        class="w-full py-2 px-3 text-sm text-[#10152b] border border-slate-300 rounded-lg bg-white outline-none">
+
+                        <mat-option disabled class="!p-0 !h-auto sticky top-0 bg-white z-10"
+                            style="opacity: 1; cursor: default; pointer-events: auto;">
+                            <div class="w-full p-2 border-b border-slate-100" style="pointer-events: auto;"
+                                (click)="$event.stopPropagation(); $event.preventDefault()">
+                                <input type="text" [formControl]="categorySearchControl"
+                                    placeholder="Buscar por nombre..."
+                                    class="w-full py-2 px-3 border border-slate-300 rounded-md outline-none text-sm text-[#10152b]"
+                                    style="pointer-events: auto;" (keydown)="$event.stopPropagation()">
+                            </div>
+                        </mat-option>
+
+                        @if (categories().length === 0) {
+                        <mat-option disabled>No se encontraron resultados</mat-option>
+                        }
+
+                        @for (category of categories(); track category.id) {
+                        <mat-option [value]="category.id">{{ category.name }}</mat-option>
+                        }
+                    </mat-select>
+                </div>
+
+                <div class="form-group mt-5">
+                    <label for="physicalLocation">Ubicación Física</label>
+                    <input type="text" id="physicalLocation" formControlName="physicalLocation">
+                </div>
+
+                <div class="flex items-center justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
+                    <button type="button"
+                        class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                        (click)="close()">
+                        Cancelar
+                    </button>
+                    <button type="button"
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-[#f97316] hover:bg-[#ea580c] rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        (click)="save()">
+                        Guardar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

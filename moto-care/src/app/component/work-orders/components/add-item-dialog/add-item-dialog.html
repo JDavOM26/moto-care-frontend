@@ -1,0 +1,88 @@
+<h2 mat-dialog-title class="font-bold text-[#10152b] m-0 border-b border-slate-100 pb-4">
+  {{ isEdit ? 'Editar ítem' : 'Añadir a la orden' }}
+</h2>
+
+<mat-dialog-content class="pt-6">
+  <mat-tab-group [(selectedIndex)]="activeTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="0ms" class="mb-4">
+    @if (!isEdit || activeTabIndex === 0) {
+    <mat-tab label="Catálogo"></mat-tab>
+    }
+    @if (!isEdit || (isEdit && itemForm.get('type')?.value === 'servicio')) {
+    <!-- Note: when isEdit is true and it's a service, this is the only tab, so its index becomes 0 -->
+    <mat-tab label="Servicio"></mat-tab>
+    }
+    @if (!isEdit || (isEdit && itemForm.get('type')?.value === 'repuesto' && itemForm.get('isManual')?.value)) {
+    <mat-tab label="Manual"></mat-tab>
+    }
+  </mat-tab-group>
+
+  <form [formGroup]="itemForm" class="flex flex-col gap-4">
+
+
+    @if (itemForm.get('type')?.value === 'repuesto' && !itemForm.get('isManual')?.value) {
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Seleccionar repuesto del inventario</mat-label>
+      <mat-select formControlName="inventoryItemId">
+        @for (item of inventoryItems; track item.id) {
+        <mat-option [value]="item.id" [disabled]="!isOriginalItem(item) && ((item.availableQuantity || 0) - (item.reservedQuantity || 0)) <= 0">
+          {{ item.itemName }}
+          (Disponible: {{ getSelectedNetStockForItem(item) }})
+          - Q{{ item.salesPrice }}
+          @if (((item.availableQuantity || 0) - (item.reservedQuantity || 0)) <= 0) { <span> - AGOTADO</span>
+            }
+        </mat-option>
+        }
+      </mat-select>
+      @if (itemForm.get('inventoryItemId')?.hasError('required')) {
+      <mat-error>Debes seleccionar un repuesto</mat-error>
+      }
+    </mat-form-field>
+    }
+
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>{{ itemForm.get('type')?.value === 'servicio' ? 'Descripción del servicio' : 'Descripción / Detalle del
+        repuesto' }}</mat-label>
+      <input matInput formControlName="description" placeholder="Ej: Limpieza de inyectores o Pastillas marca X"
+        autocomplete="off">
+      @if (itemForm.get('description')?.hasError('required')) {
+      <mat-error>La descripción es obligatoria</mat-error>
+      }
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Observación Interna (Opcional)</mat-label>
+      <textarea matInput formControlName="observation" placeholder="Ej: Observación sobre el estado del repuesto"
+        rows="2" autocomplete="off"></textarea>
+    </mat-form-field>
+
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Cantidad</mat-label>
+        <input matInput type="number" formControlName="quantity">
+
+        @if (itemForm.get('quantity')?.hasError('max')) {
+        <mat-error>Stock insuficiente. Disponible: {{ getSelectedNetStock() }}</mat-error>
+        }
+        @if (itemForm.get('quantity')?.hasError('min')) {
+        <mat-error>Debe ser mayor a 0</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Precio Unitario (Q)</mat-label>
+        <input matInput type="number" formControlName="unitPrice" min="0">
+        <mat-error *ngIf="itemForm.get('unitPrice')?.hasError('min')">No puede ser negativo</mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="border-t border-slate-100 p-4 m-0 gap-2">
+  <button mat-button (click)="onCancel()" class="text-slate-500">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="itemForm.invalid"
+    [class]="itemForm.invalid ? 'bg-slate-300 text-slate-500' : 'bg-[#f97316] text-white'">
+    {{ isEdit ? 'Guardar' : 'Añadir' }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,116 @@
+<div class="p-6 md:p-10 animate-fade-in max-w-7xl mx-auto">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-[#10152b]">Dashboard Financiero</h1>
+      <p class="text-slate-500">Resumen de ingresos y facturación del año {{ currentYear() }}</p>
+    </div>
+  </div>
+
+  @if (financialData()) {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200">
+      <mat-card-content class="flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+          <mat-icon class="text-blue-600">receipt_long</mat-icon>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium mb-1">Ticket Promedio</h3>
+        <p class="text-3xl font-bold text-[#10152b]">Q {{ financialData()!.averageTicket | number:'1.2-2' }}</p>
+      </mat-card-content>
+    </mat-card>
+
+
+
+
+  </div>
+
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
+      <mat-card-header class="mb-4 pt-4 px-4">
+        <mat-card-title class="text-lg font-bold text-[#10152b]">Ingresos Mensuales</mat-card-title>
+        <mat-card-subtitle>Evolución de ingresos durante el año</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="w-full h-[350px]">
+          <canvas id="monthlyRevenueChart"></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 flex flex-col">
+      <mat-card-header class="mb-4 pt-4 px-4">
+        <mat-card-title class="text-lg font-bold text-[#10152b]">Ingresos por Tipo</mat-card-title>
+        <mat-card-subtitle>Distribución de ingresos</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="flex-grow flex items-center justify-center pb-6">
+        <div class="w-full max-w-[300px] h-[300px]">
+          <canvas id="revenueByTypeChart"></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  } @else {
+  <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+    <mat-icon class="text-6xl mb-4 opacity-50">analytics</mat-icon>
+    <p class="text-lg">Cargando datos del dashboard...</p>
+  </div>
+  }
+
+  <!-- Divider -->
+  <hr class="my-10 border-slate-200">
+
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h2 class="text-3xl font-bold text-[#10152b]">Rendimiento del Taller</h2>
+      <p class="text-slate-500">Métricas operativas y de estado de órdenes</p>
+    </div>
+  </div>
+
+  @if (performanceData()) {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200">
+      <mat-card-content class="flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+          <mat-icon class="text-emerald-600">build</mat-icon>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium mb-1">Tiempo Promedio de Reparación</h3>
+        <p class="text-3xl font-bold text-[#10152b]">{{ performanceData()!.averageRepairTime | number:'1.1-1' }} días
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+      <mat-card-header class="mb-4 pt-4 px-4">
+        <mat-card-title class="text-lg font-bold text-[#10152b]">Estado Actual de Órdenes</mat-card-title>
+        <mat-card-subtitle>Distribución por estado</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="flex-grow flex items-center justify-center pb-6">
+        <div class="w-full max-w-[300px] h-[300px]">
+          <canvas id="currentOrderStatusesChart"></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="!rounded-2xl shadow-sm border border-slate-200">
+      <mat-card-header class="mb-4 pt-4 px-4">
+        <mat-card-title class="text-lg font-bold text-[#10152b]">Rendimiento de Órdenes</mat-card-title>
+        <mat-card-subtitle>Cantidad de órdenes completadas a tiempo</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="w-full h-[300px]">
+          <canvas id="orderPerformanceStatusChart"></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  } @else {
+  <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+    <mat-icon class="text-6xl mb-4 opacity-50">engineering</mat-icon>
+    <p class="text-lg">Cargando métricas de rendimiento...</p>
+  </div>
+  }
+</div>

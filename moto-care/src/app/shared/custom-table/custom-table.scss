@@ -1,0 +1,57 @@
+::ng-deep .mat-mdc-paginator {
+  background: transparent !important;
+  color: #475569 !important;
+}
+
+::ng-deep .mat-mdc-icon-button {
+  color: #64748b !important;
+}
+
+::ng-deep .mat-mdc-icon-button[disabled] {
+  color: #cbd5e1 !important;
+}
+
+::ng-deep .mat-mdc-select-value-text {
+  color: #334155 !important;
+}
+
+::ng-deep .mat-mdc-select-arrow {
+  color: #64748b !important;
+}
+
+
+::ng-deep .mat-sort-header-container {
+  outline: none !important;
+}
+
+::ng-deep .mat-sort-header-arrow {
+  color: #64748b !important;
+}
+
+
+::ng-deep table.mat-table tbody tr.mat-row:nth-child(even),
+::ng-deep .mat-mdc-table tbody .mat-mdc-row:nth-child(even) {
+  background-color: #e0effa !important;
+}
+
+::ng-deep table.mat-table tbody tr.mat-row:hover,
+::ng-deep .mat-mdc-table tbody .mat-mdc-row:hover {
+  background-color: #f3f4f6 !important;
+}
+
+
+::ng-deep .mat-mdc-table {
+  background-color: #ffffff !important;
+}
+
+::ng-deep table.mat-table td.mat-cell,
+::ng-deep .mat-mdc-table .mat-mdc-cell {
+  background-color: transparent !important;
+}
+
+
+::ng-deep .mat-mdc-header-cell,
+::ng-deep .mat-sort-header-content {
+  font-weight: 700 !important;
+  color: #111827 !important;
+}

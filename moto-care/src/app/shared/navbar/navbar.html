@@ -1,0 +1,77 @@
+<header class="top-navbar">
+
+  <div class="navbar-left">
+    <button class="toggle-sidenav-btn" (click)="onToggle()"
+      matTooltip="{{ sidenavCollapsed() ? 'Expandir menú' : 'Colapsar menú' }}" matTooltipPosition="right">
+      <mat-icon>{{ sidenavCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="navbar-center">
+  </div>
+
+  <div class="navbar-right">
+    <button class="nav-action-btn" matTooltip="Notificaciones" [matMenuTriggerFor]="notificationsMenu">
+      <mat-icon>notifications_none</mat-icon>
+    </button>
+    <mat-menu #notificationsMenu="matMenu" xPosition="before" class="custom-notifications-menu">
+      <div class="px-4 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center w-72">
+        <h3 class="font-bold text-slate-800 m-0">Notificaciones</h3>
+      </div>
+      <div class="max-h-80 overflow-y-auto">
+        @for (notif of notifications; track $index) {
+        <button mat-menu-item
+          class="!h-auto !py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
+          @if (notif.unread) {
+          <span class="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+          }
+          <div class="flex flex-col pl-3">
+            <span class="text-sm font-semibold text-slate-800">{{ notif.title }}</span>
+            <span class="text-xs text-slate-500 whitespace-normal leading-tight mt-0.5">{{ notif.message }}</span>
+            <span class="text-[10px] text-slate-400 mt-1">{{ notif.time }}</span>
+          </div>
+        </button>
+        } @empty {
+        <div class="p-6 text-center">
+          <mat-icon class="text-slate-300 mb-2">notifications_off</mat-icon>
+          <p class="text-sm text-slate-500 m-0">No tienes notificaciones</p>
+        </div>
+        }
+      </div>
+      <div class="p-2 border-t border-slate-100 text-center">
+        <button mat-button color="primary" class="w-full !text-sm">Ver todas</button>
+      </div>
+    </mat-menu>
+
+    <button class="nav-avatar-btn" matTooltip="Mi perfil" [matMenuTriggerFor]="profileMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #profileMenu="matMenu" xPosition="before" class="custom-profile-menu">
+
+      <div class="px-4 py-3 mb-1 bg-slate-50 border-b border-slate-100 flex flex-col items-center">
+        <div
+          class="w-12 h-12 bg-[#10152b] text-white rounded-full flex items-center justify-center text-lg font-bold mb-2 shadow-sm">
+          {{ securityService.currentUser()?.username?.charAt(0) || 'U' }}
+        </div>
+        <p class="text-sm font-semibold text-slate-800">{{ securityService.currentUser()?.username || 'Usuario' }}</p>
+        <p class="text-xs text-slate-500">{{ securityService.currentUser()?.role || 'Guest' }}</p>
+      </div>
+
+
+      <button mat-menu-item routerLink="/profile" class="hover:bg-slate-50 transition-colors">
+        <mat-icon class="text-slate-600">person</mat-icon>
+        <span class="text-slate-700 font-medium">Mi Perfil</span>
+      </button>
+      <button mat-menu-item class="hover:bg-slate-50 transition-colors">
+        <mat-icon class="text-slate-600">info</mat-icon>
+        <span class="text-slate-700 font-medium">Ayuda / Info</span>
+      </button>
+      <mat-divider class="my-1"></mat-divider>
+      <button mat-menu-item (click)="logout()" class="hover:bg-red-50 transition-colors group">
+        <mat-icon class="text-red-400 group-hover:text-red-600 transition-colors">logout</mat-icon>
+        <span class="text-red-500 font-medium group-hover:text-red-600 transition-colors">Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </div>
+
+</header>

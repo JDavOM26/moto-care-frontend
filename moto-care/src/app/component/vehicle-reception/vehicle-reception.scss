@@ -1,0 +1,32 @@
+.btn-sidebar-color {
+  background-color: #10152b !important;
+  color: white !important;
+
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.12) !important;
+    color: rgba(0, 0, 0, 0.26) !important;
+  }
+}
+
+::ng-deep .mat-step-header .mat-step-icon,
+::ng-deep .mat-step-header .mat-step-icon-selected,
+::ng-deep .mat-step-header .mat-step-icon-state-edit,
+::ng-deep .mat-step-header .mat-step-icon-state-done {
+  background-color: #10152b !important;
+  color: white !important;
+}
+
+.btn-outline-sidebar {
+  color: #64748b !important;
+  border-color: #cbd5e1 !important;
+}
+
+.btn-accent-color {
+  background-color: #f97316 !important;
+  color: white !important;
+
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.12) !important;
+    color: rgba(0, 0, 0, 0.26) !important;
+  }
+}

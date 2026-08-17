@@ -1,0 +1,279 @@
+<div class="h-full w-full flex flex-col lg:flex-row bg-white animate-fade-in">
+
+  <div class="w-full lg:w-64 p-6 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200">
+    <h2 class="text-lg font-bold text-[#10152b] mb-4">Estado del Taller</h2>
+
+    <div class="space-y-6">
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <mat-icon class="text-blue-500" style="font-size: 20px; width: 20px; height: 20px;">build</mat-icon>
+          <h3 class="text-sm font-semibold text-[#10152b]">Vehículos en taller</h3>
+        </div>
+        <div class="mb-2 text-center">
+          <span class="text-3xl font-bold text-[#10152b] leading-none">{{ stats()?.vehiclesInWorkshop || 0 }}</span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">Los que están siendo atendidos ahora.</p>
+      </div>
+
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <mat-icon class="text-green-500" style="font-size: 20px; width: 20px; height: 20px;">today</mat-icon>
+          <h3 class="text-sm font-semibold text-[#10152b]">Recepciones hoy</h3>
+        </div>
+        <div class="mb-2 text-center">
+          <span class="text-3xl font-bold text-[#10152b] leading-none">{{ stats()?.receptionsToday || 0 }}</span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">Cuántas entradas se han registrado en el día.</p>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <mat-icon class="text-orange-500"
+            style="font-size: 20px; width: 20px; height: 20px;">pending_actions</mat-icon>
+          <h3 class="text-sm font-semibold text-[#10152b] ">Pendientes de diagnóstico</h3>
+        </div>
+        <div class="mb-2 text-center">
+          <span class="text-3xl font-bold text-[#10152b] leading-none">{{ stats()?.pendingDiagnosis || 0 }}</span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">Vehículos que entraron pero aún no tienen orden de trabajo.
+        </p>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <mat-icon class="text-purple-500"
+            style="font-size: 20px; width: 20px; height: 20px;">event_available</mat-icon>
+          <h3 class="text-sm font-semibold text-[#10152b] ">Prometidos para hoy</h3>
+        </div>
+        <div class="mb-2 text-center">
+          <span class="text-3xl font-bold text-[#10152b] leading-none">{{ stats()?.promisedToday || 0 }}</span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">Vehículos cuya entrega se programó para el día de hoy.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="w-full flex-1 p-6 lg:p-10">
+    <div class="mb-6 border-b border-slate-100 pb-4">
+      <h1 class="text-2xl font-bold text-[#10152b]">Recepción de Vehículos</h1>
+      <p class="text-slate-500 mt-1">Formulario para la inspección y recepción de vehículos</p>
+    </div>
+
+    <form [formGroup]="receptionForm" (ngSubmit)="onSubmit()" class="mt-4">
+      <mat-stepper [linear]="false" #stepper class="bg-transparent" orientation="vertical"
+        [class.md:orientation-horizontal]="true">
+
+        <mat-step formGroupName="client" [stepControl]="receptionForm.get('client')!">
+          <ng-template matStepLabel>Datos del Cliente</ng-template>
+          <div class="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombres</mat-label>
+              <input matInput formControlName="firstName" placeholder="Ej. Juan Pérez">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Apellidos</mat-label>
+              <input matInput formControlName="lastName">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de Documento</mat-label>
+              <mat-select formControlName="idDocumentType">
+                <mat-option [value]="3">NIT</mat-option>
+                <mat-option [value]="1">DPI</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Número de Documento</mat-label>
+              <input matInput formControlName="documentNumber" (blur)="findClientByDocumentNumber()">
+              <button mat-icon-button matSuffix type="button" (click)="findClientByDocumentNumber()"
+                matTooltip="Buscar cliente">
+                <mat-icon fontSet="material-symbols-outlined">search</mat-icon>
+              </button>
+            </mat-form-field>
+            <div formArrayName="phoneNumbers" class="space-y-2">
+              <div class="flex items-center justify-between h-10">
+                <span class="text-sm text-slate-500">Teléfonos</span>
+                @if (phoneNumbers.controls[phoneNumbers.controls.length - 1].value) {
+                <button mat-button color="primary" type="button" (click)="addPhoneNumber()">
+                  <mat-icon>add</mat-icon> Agregar
+                </button>
+                }
+              </div>
+              <div class="max-h-[160px] overflow-y-auto pr-2 bg-transparent custom-scrollbar space-y-2">
+                @for (phoneControl of phoneNumbers.controls; track $index) {
+                <div class="flex gap-2 items-start">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <input matInput [formControlName]="$index" placeholder="Teléfono">
+                  </mat-form-field>
+                  @if (phoneNumbers.controls.length > 1) {
+                  <button mat-icon-button color="warn" type="button" (click)="removePhoneNumber($index)" class="mt-1">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+
+            <div formArrayName="emails" class="space-y-2">
+              <div class="flex items-center justify-between h-10">
+                <span class="text-sm text-slate-500">Correos Electrónicos</span>
+                @if (emails.controls[emails.controls.length - 1].value) {
+                <button mat-button color="primary" type="button" (click)="addEmail()">
+                  <mat-icon>add</mat-icon> Agregar
+                </button>
+                }
+              </div>
+              <div class="max-h-[160px] overflow-y-auto pr-2 bg-transparent custom-scrollbar space-y-2">
+                @for (emailControl of emails.controls; track $index) {
+                <div class="flex gap-2 items-start">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <input matInput [formControlName]="$index" placeholder="Correo">
+                  </mat-form-field>
+                  @if (emails.controls.length > 1) {
+                  <button mat-icon-button color="warn" type="button" (click)="removeEmail($index)" class="mt-1">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-end mt-4">
+            <button mat-flat-button class="btn-sidebar-color" matStepperNext type="button">Siguiente</button>
+          </div>
+        </mat-step>
+
+
+        <mat-step formGroupName="motorcycle" [stepControl]="receptionForm.get('motorcycle')!">
+          <ng-template matStepLabel>Datos del Vehículo</ng-template>
+          <div class="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Placa</mat-label>
+              <input matInput formControlName="licensePlate" (blur)="searchMotorcycleExistence()">
+              <button mat-icon-button matSuffix type="button" (click)="searchMotorcycleExistence()"
+                matTooltip="Buscar motocicleta">
+                <mat-icon fontSet="material-symbols-outlined">search</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>VIN / Chasis</mat-label>
+              <input matInput formControlName="vinChasis" (blur)="searchMotorcycleExistence()">
+              <button mat-icon-button matSuffix type="button" (click)="searchMotorcycleExistence()"
+                matTooltip="Buscar motocicleta">
+                <mat-icon fontSet="material-symbols-outlined">search</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="md:col-span-2">
+              <mat-label>Número de Motor</mat-label>
+              <input matInput formControlName="engineNumber" (blur)="searchMotorcycleExistence()">
+              <button mat-icon-button matSuffix type="button" (click)="searchMotorcycleExistence()"
+                matTooltip="Buscar motocicleta">
+                <mat-icon fontSet="material-symbols-outlined">search</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Marca</mat-label>
+              <mat-select formControlName="brandId" (selectionChange)="loadModelsByBrand($event.value)">
+                @for (brand of brands(); track brand.id) {
+                <mat-option [value]="brand.id">
+                  {{brand.name}}
+                </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Modelo</mat-label>
+              <mat-select formControlName="modelId">
+                @for (model of models(); track model.id) {
+                <mat-option [value]="model.id">
+                  {{model.name + ' ' + model.year}}
+                </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="md:col-span-2">
+              <mat-label>Color</mat-label>
+              <mat-select formControlName="colorId">
+                @for (color of colors(); track color.id) {
+                <mat-option [value]="color.id">
+                  {{color.name}}
+                </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="flex justify-end gap-2 mt-4">
+            <button mat-stroked-button class="btn-outline-sidebar" matStepperPrevious type="button">Atrás</button>
+            <button mat-flat-button class="btn-sidebar-color" matStepperNext type="button">Siguiente</button>
+          </div>
+        </mat-step>
+
+        <mat-step [stepControl]="receptionForm">
+          <ng-template matStepLabel>Detalles de Recepción</ng-template>
+          <div class="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Kilometraje</mat-label>
+              <input matInput type="number" formControlName="mileage">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fecha Prometida</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="promisedDate">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="md:col-span-2">
+              <mat-label>Diagnóstico Inicial / Fallas reportadas</mat-label>
+              <textarea matInput rows="4" formControlName="initialDiagnosis"></textarea>
+            </mat-form-field>
+          </div>
+          <div class="flex justify-end gap-2 mt-4">
+            <button mat-stroked-button class="btn-outline-sidebar" matStepperPrevious type="button">Atrás</button>
+            <button mat-flat-button class="btn-accent-color" type="submit" [disabled]="receptionForm.invalid">Generar
+              Recepción</button>
+          </div>
+        </mat-step>
+
+      </mat-stepper>
+    </form>
+  </div>
+
+
+  <div class="w-full lg:w-64 p-6 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200">
+    <h2 class="text-lg font-bold text-[#10152b] mb-4">Resumen</h2>
+
+    @if (!formValues().client?.firstName && !formValues().motorcycle?.brandId && !formValues().initialDiagnosis) {
+    <div class="flex flex-col items-center justify-center mt-10 text-center">
+      <mat-icon class="text-slate-400 mb-2" style="font-size: 48px; width: 48px; height: 48px;">pending</mat-icon>
+      <p class="text-sm text-slate-400 italic mt-2">Completa el formulario para ver el resumen aquí.</p>
+    </div>
+    } @else {
+
+    @if (formValues().client?.firstName) {
+    <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Cliente</p>
+    <p class="text-sm font-medium text-[#10152b] mb-4">
+      {{ formValues().client.firstName }} {{ formValues().client.lastName }}
+    </p>
+    }
+
+    @if (formValues().motorcycle?.brandId) {
+    <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Vehículo</p>
+    <p class="text-sm font-medium text-[#10152b] mb-4">
+      {{ selectedBrand()?.name }}
+      @if (selectedModel()) {
+      · {{ selectedModel()?.name }} {{ selectedModel()?.year }}
+      }
+    </p>
+    }
+
+    @if (formValues().initialDiagnosis) {
+    <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Problema</p>
+    <p class="text-sm text-slate-600 mb-4">{{ formValues().initialDiagnosis }}</p>
+    }
+
+    }
+  </div>
+</div>

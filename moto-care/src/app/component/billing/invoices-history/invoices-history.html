@@ -1,0 +1,58 @@
+<div class="p-6 md:p-8 max-w-7xl mx-auto min-h-[calc(100vh-64px)]">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-[#10152b] m-0">Historial de Facturas</h1>
+      <p class="text-slate-500 m-0 mt-1">Consulta y gestiona las facturas generadas</p>
+    </div>
+
+    <div class="flex gap-3">
+      <button mat-button class="bg-white border border-slate-200" (click)="loadInvoices()">
+        <mat-icon>refresh</mat-icon>
+        Refrescar
+      </button>
+    </div>
+  </div>
+
+  <app-custom-table [data]="invoices()" [columns]="tableColumns" class="block w-full">
+
+
+    <ng-template appTableColumn="emissionDate" let-invoice>
+      {{ invoice.emissionDate | date:'dd/MM/yyyy HH:mm' }}
+    </ng-template>
+
+    <ng-template appTableColumn="subtotal" let-invoice>
+      {{ invoice.subtotal | currency:'GTQ':'symbol-narrow':'1.2-2' }}
+    </ng-template>
+
+    <ng-template appTableColumn="iva" let-invoice>
+      {{ invoice.iva | currency:'GTQ':'symbol-narrow':'1.2-2' }}
+    </ng-template>
+
+    <ng-template appTableColumn="total" let-invoice>
+      <span class="font-semibold text-slate-800">
+        {{ invoice.total | currency:'GTQ':'symbol-narrow':'1.2-2' }}
+      </span>
+    </ng-template>
+
+    <ng-template appTableColumn="idInvoiceStatus" let-invoice>
+      <span class="px-2 py-1 rounded-md text-xs font-medium" [ngClass]="{
+              'bg-blue-100 text-blue-700': invoice.idInvoiceStatus === 1,
+              'bg-green-100 text-green-700': invoice.idInvoiceStatus === 2,
+              'bg-red-100 text-red-700': invoice.idInvoiceStatus === 3
+            }">
+        {{ invoice.idInvoiceStatus === 1 ? 'Emitida' :
+        invoice.idInvoiceStatus === 2 ? 'Pagada' :
+        invoice.idInvoiceStatus === 3 ? 'Anulada' : 'Desconocido' }}
+      </span>
+    </ng-template>
+
+    <ng-template appTableColumn="actions" let-invoice>
+      <div class="flex items-center gap-3">
+        <button mat-icon-button class="!w-8 !h-8 bg-slate-500/10 hover:bg-slate-500/20" title="Ver detalles"
+          (click)="viewInvoiceDetails(invoice)">
+          <mat-icon class="!w-4 !h-4 text-[16px] leading-[16px] text-slate-700">visibility</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </app-custom-table>
+</div>

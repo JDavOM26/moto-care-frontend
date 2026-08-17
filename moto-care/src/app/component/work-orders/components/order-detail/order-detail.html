@@ -1,0 +1,273 @@
+<div class="h-full w-full flex flex-col lg:flex-row bg-white animate-fade-in">
+
+    <div class="w-full lg:w-64 p-6 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200">
+        <h2 class="text-lg font-bold text-[#10152b] mb-6">
+            Orden OT-{{ order()?.id}}
+        </h2>
+
+        <div class="flex flex-col gap-5 text-sm text-slate-600 mb-6">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Ingreso</p>
+                <p class="font-medium text-slate-800">{{order()?.createdDate | date:'dd MMM yyyy HH:mm'}}</p>
+            </div>
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Entrega Prometida</p>
+                <p class="font-medium text-slate-800">{{order()?.promisedDate | date:'dd MMM yyyy HH:mm'}}</p>
+            </div>
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Técnico Asignado</p>
+                <div class="flex items-center gap-2 mt-1.5">
+                    <div
+                        class="w-7 h-7 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs shadow-sm">
+                        {{order()?.technicianName![0].toUpperCase() + order()?.technicianName![1].toUpperCase()}}
+                    </div>
+                    <p class="font-medium text-slate-800">{{order()?.technicianName}}</p>
+                </div>
+            </div>
+        </div>
+
+        <mat-divider class="mb-6 border-slate-200"></mat-divider>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-[#10152b] m-0">Diagnóstico Cliente</h2>
+            <button mat-icon-button (click)="showDiagnosis()"
+                class="text-indigo-600 !w-8 !h-8 flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 rounded-full transition-colors"
+                title="Ver completo">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">open_in_full</mat-icon>
+            </button>
+        </div>
+        <div
+            class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 italic mb-6 shadow-sm relative">
+            <p class="line-clamp-3 m-0 leading-relaxed">
+                "{{ order()?.clientDiagnosis || 'No se proporcionó diagnóstico del cliente.' }}"
+            </p>
+        </div>
+
+        <mat-divider class="mb-6 border-slate-200"></mat-divider>
+
+        <h2 class="text-lg font-bold text-[#10152b] mb-4">Información General</h2>
+
+        <div class="flex flex-col gap-6">
+
+            <div class="flex items-start gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0 mt-1">
+                    <mat-icon style="font-size: 20px; width: 20px; height: 20px;">person</mat-icon>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Cliente</p>
+                    <p class="font-bold text-[#10152b]">{{order()?.customerName}}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Tel: +502 1234-5678</p>
+                    <p class="text-xs text-slate-500">juan.perez@example.com</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 flex-shrink-0 mt-1">
+                    <mat-icon style="font-size: 20px; width: 20px; height: 20px;">two_wheeler</mat-icon>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Motocicleta</p>
+                    <p class="font-bold text-[#10152b]">{{order()?.motorcycleModel}}</p>
+                    <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                        <span
+                            class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-medium border border-slate-200">{{order()?.plate}}</span>
+                        <span class="text-xs text-slate-500">Color: {{order()?.color}}</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Km: {{order()?.mileageEntry}}</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="w-full flex-1 p-6 lg:p-10 bg-slate-50/30">
+        <div class="mb-6 flex flex-wrap justify-between items-end border-b border-slate-100 pb-4 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-[#10152b]">Detalle de Orden</h1>
+                <p class="text-slate-500 mt-1">Consulta y gestión de la orden de trabajo</p>
+            </div>
+            <span class="px-3 py-1 font-semibold rounded-full text-sm text-white"
+                [style.backgroundColor]="order()?.statusColor || '#3b82f6'">
+                {{order()?.statusName}}
+            </span>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <mat-icon class="text-slate-500"
+                        style="font-size: 20px; width: 20px; height: 20px;">handyman</mat-icon>
+                    <h3 class="font-bold text-[#10152b]">Detalle de Trabajo</h3>
+                </div>
+                <button mat-stroked-button color="primary"
+                    [disabled]="isOrderClosed"
+                    class="!rounded-lg text-sm bg-white border-blue-200 shadow-sm disabled:opacity-50" (click)="openAddItemDialog()">
+                    <mat-icon fontSet="material-symbols-outlined"
+                        class="text-[18px] w-[18px] h-[18px] mr-1 flex items-center justify-center">add</mat-icon>
+                    Añadir
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-slate-50 border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+                            <th class="p-4 font-semibold">Tipo</th>
+                            <th class="p-4 font-semibold">Descripción</th>
+                            <th class="p-4 font-semibold text-center">Cant.</th>
+                            <th class="p-4 font-semibold text-right">Precio Unit.</th>
+                            <th class="p-4 font-semibold text-right">Subtotal</th>
+                            <th class="p-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
+                        @for (detail of orderDetails(); track detail.id) {
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="p-4">
+                                <span [ngClass]="{
+                                    'bg-purple-100 text-purple-700 border-purple-200': detail.itemType === 'SERVICE',
+                                    'bg-teal-100 text-teal-700 border-teal-200': detail.itemType === 'PART' || !detail.itemType
+                                  }"
+                                    class="px-2 py-1 rounded-md text-[11px] font-semibold tracking-wide border uppercase">
+                                    {{ detail.itemType === 'SERVICE' ? 'Servicio' : 'Repuesto' }}
+                                </span>
+                            </td>
+                            <td class="p-4 font-medium text-[#10152b]">
+                                {{ detail.description }}
+                                @if (detail.observation) {
+                                <div class="text-xs text-slate-400 font-normal italic mt-1">{{ detail.observation }}
+                                </div>
+                                }
+                            </td>
+                            <td class="p-4 text-center">{{ detail.amount || detail.quantity }}</td>
+                            <td class="p-4 text-right">Q {{ detail.unitPrice | number:'1.2-2' }}</td>
+                            <td class="p-4 text-right font-medium text-[#10152b]">Q {{ detail.subtotal ||
+                                ((detail.amount || detail.quantity || 0) * detail.unitPrice) | number:'1.2-2' }}</td>
+                            <td class="p-4 text-right flex justify-end gap-1">
+                                <button mat-icon-button (click)="editDetail(detail)" [disabled]="isOrderClosed"
+                                    class="text-slate-400 hover:text-indigo-600 !w-8 !h-8 flex items-center justify-center bg-indigo-50/0 hover:bg-indigo-50 disabled:opacity-50">
+                                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">edit</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="removeDetail(detail.id!)" [disabled]="isOrderClosed"
+                                    class="text-slate-400 hover:text-red-500 !w-8 !h-8 flex items-center justify-center bg-red-50/0 hover:bg-red-50 disabled:opacity-50">
+                                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">delete</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="6" class="p-4 text-center text-slate-500 italic">No hay ítems agregados a esta
+                                orden.</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-slate-50/80 p-4 border-t border-slate-200 flex justify-end items-center gap-4">
+                <span class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Total Estimado</span>
+                <span class="text-xl font-bold text-[#10152b]">Q {{ orderTotal() | number:'1.2-2' }}</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="w-full lg:w-80 p-6 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200 bg-slate-50/50">
+
+        <h2 class="text-lg font-bold text-[#10152b] mb-4">Progreso de Orden</h2>
+        <div class="flex flex-col gap-3 mb-8">
+            @for (estado of workflowStates; track estado.id; let i = $index) {
+                <button mat-flat-button 
+                        [disabled]="(!esSiguientePaso(estado.id) && i !== currentStatusIndex) || isOrderClosed"
+                        (click)="avanzarEstado(estado.id)"
+                        class="w-full !justify-start !px-4 py-3 !rounded-xl transition-all shadow-sm"
+                        [class]="i === currentStatusIndex ? 'bg-indigo-600 text-white' : (i < currentStatusIndex ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-white text-slate-400 border border-slate-200')">
+                    <div class="flex items-center w-full">
+                        <mat-icon class="mr-3">{{ estado.icon }}</mat-icon>
+                        <span class="flex-1 text-left font-semibold">{{ estado.name }}</span>
+                        @if (i < currentStatusIndex) {
+                            <mat-icon class="text-indigo-500">check_circle</mat-icon>
+                        } @else if (i === currentStatusIndex) {
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                        }
+                    </div>
+                </button>
+            }
+        </div>
+
+        @if (order()?.statusName !== 'Entregado' && order()?.statusName !== 'Cancelado') {
+            <button mat-stroked-button color="warn"
+                    (click)="cancelOrder()"
+                    class="w-full !rounded-xl border-red-200 text-red-600 hover:bg-red-50 mb-8 py-5 font-semibold text-base transition-colors">
+                <mat-icon class="mr-2">cancel</mat-icon>
+                Cancelar Orden
+            </button>
+        }
+
+        <mat-divider class="mb-6 border-slate-200"></mat-divider>
+
+        <h2 class="text-lg font-bold text-[#10152b] mb-6">Bitácora</h2>
+
+
+        <div class="relative border-l border-slate-200 ml-3 mb-8">
+            @for (history of orderHistory(); track history.id; let isLast = $last) {
+            <div class="mb-6 ml-6">
+                <span
+                    class="absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-4 ring-slate-50"
+                    [ngClass]="{
+                        'bg-green-100 text-green-500': isLast && isOrderClosed,
+                        'bg-blue-100 text-blue-500': isLast && !isOrderClosed,
+                        'bg-slate-200 text-slate-500': !isLast
+                    }">
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px;">
+                        {{ isLast && isOrderClosed ? 'check' : 'history' }}
+                    </mat-icon>
+                </span>
+                <h3 class="flex items-center mb-1 text-sm font-semibold text-slate-800">{{ history.newStateName || 'Estado Actualizado' }}</h3>
+                <time class="block mb-2 text-xs font-normal leading-none text-slate-400">{{ history.createdDate | date:'dd MMM yyyy HH:mm' }}</time>
+                <p class="text-xs font-normal text-slate-500">{{ history.observation || 'Se actualizó el estado de la orden.' }}</p>
+                @if (history.employeeName) {
+                    <p class="text-xs font-medium text-slate-600 mt-1">Por: {{ history.employeeName }}</p>
+                }
+            </div>
+            } @empty {
+            <div class="ml-6">
+                <span
+                    class="absolute flex items-center justify-center w-6 h-6 bg-slate-200 rounded-full -left-3 ring-4 ring-slate-50 text-slate-400">
+                    <mat-icon style="font-size: 14px; width: 14px; height: 14px;">pending</mat-icon>
+                </span>
+                <h3 class="mb-1 text-sm font-semibold text-slate-400">{{order()?.statusName || 'Sin historial'}}</h3>
+            </div>
+            }
+        </div>
+
+        <mat-divider class="mb-6 border-slate-200"></mat-divider>
+
+        <h2 class="text-lg font-bold text-[#10152b] mb-4">Resumen Financiero</h2>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-4">
+            <div class="flex justify-between items-center text-sm mb-2 text-slate-600">
+                <span>Subtotal (Repuestos)</span>
+                <span class="font-medium">Q {{ totalParts() | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between items-center text-sm mb-4 text-slate-600">
+                <span>Mano de obra</span>
+                <span class="font-medium">Q {{ totalLabor() | number:'1.2-2' }}</span>
+            </div>
+            <mat-divider class="mb-4 border-slate-100"></mat-divider>
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-[#10152b]">Total Estimado</span>
+                <span class="text-xl font-bold text-[#10152b]">Q {{ orderTotal() | number:'1.2-2' }}</span>
+            </div>
+        </div>
+
+        @if (order()?.statusName !== 'Entregado' && order()?.statusName !== 'Cancelado') {
+        <button mat-flat-button color="primary" (click)="openInvoiceDialog()"
+            class="w-full py-5 !rounded-lg text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors">
+            Facturar Orden
+        </button>
+        }
+    </div>
+</div>

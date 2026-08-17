@@ -1,0 +1,29 @@
+<div class="p-6 md:p-10 animate-fade-in">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-[#10152b]">Ordenes de Trabajo</h1>
+    <p class="text-slate-500">Gestión de solicitudes de servicio y tareas de reparación</p>
+  </div>
+
+  <app-custom-table [data]="orders()" [columns]="tableColumns" class="block w-full">
+    <ng-template appTableColumn="promisedDate" let-order>
+      <span class="text-slate-600">{{ order.promisedDate | date:'shortDate' }}</span>
+    </ng-template>
+    <ng-template appTableColumn="statusName" let-order>
+      <span class="px-2 py-1 text-white rounded-full text-xs font-medium" 
+            [style.backgroundColor]="order.statusColor || '#3b82f6'">
+            {{ order.statusName }}
+      </span>
+    </ng-template>
+    <ng-template appTableColumn="actions" let-order>
+      <div class="flex items-center gap-2">
+        <button mat-icon-button color="primary" class="!w-8 !h-8 bg-blue-500/10 hover:bg-blue-500/20"
+          [routerLink]="['/work-orders', order.id, 'detail']" title="Ver Detalles">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm text-blue-600">visibility</mat-icon>
+        </button>
+        <button mat-icon-button class="!w-8 !h-8 bg-orange-500/10 hover:bg-orange-500/20" title="Actualizar Estado">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm text-orange-600">edit</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </app-custom-table>
+</div>

@@ -1,0 +1,123 @@
+<div class="p-4 md:p-6 animate-fade-in flex flex-col h-full max-h-screen">
+
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <button mat-icon-button (click)="goBack()" class="bg-slate-100 hover:bg-slate-200">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold text-[#10152b] flex items-center gap-2">
+          Kardex de Inventario
+        </h1>
+        <p class="text-sm text-slate-500 font-medium">{{ itemName() || 'Cargando producto...' }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <mat-form-field appearance="outline" class="w-80">
+        <mat-label>Buscar otro producto...</mat-label>
+        <mat-icon matPrefix fontSet="material-symbols-outlined">search</mat-icon>
+        <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelected($event)"
+          [displayWith]="displayFn">
+          @for (option of searchResults(); track option.id) {
+          <mat-option [value]="option">
+            {{option.itemName}}
+          </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </div>
+
+  @if (stockDetail()) {
+  <div
+    class="grid grid-cols-4 gap-4 mx-auto w-full text-center bg-white rounded-xl shadow-sm border border-slate-100 mb-6 p-4 divide-x-1 divide-slate-200">
+    <div class="px-2 flex flex-col items-center justify-center gap-1">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Existencias Actuales</span>
+      <span class="text-2xl font-bold" [ngClass]="{
+            'text-rose-600': stockDetail()!.availableQuantity === 0,
+            'text-amber-500': stockDetail()!.availableQuantity > 0 && stockDetail()!.availableQuantity <= (stockDetail()!.minimumStock || 0),
+            'text-emerald-600': stockDetail()!.availableQuantity > (stockDetail()!.minimumStock || 0)
+        }">{{ stockDetail()!.availableQuantity }}</span>
+    </div>
+    <div class="px-2 flex flex-col items-center justify-center gap-1">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Stock Mínimo</span>
+      <span class="text-2xl font-bold text-slate-700">{{ stockDetail()!.minimumStock || '-' }}</span>
+    </div>
+    <div class="px-2 flex flex-col items-center justify-center gap-1">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Precio Unitario</span>
+      <span class="text-2xl font-bold text-slate-700">{{ (stockDetail()!.salesPrice || 0)}}</span>
+    </div>
+    <div class="px-2 flex flex-col items-center justify-center gap-1">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Valor Total (Venta)</span>
+      <span class="text-2xl font-bold text-[#10152b]">{{ ((stockDetail()!.salesPrice || 0) *
+        stockDetail()!.availableQuantity) }}</span>
+    </div>
+  </div>
+  }
+
+  <div class="pb-4 flex items-center justify-start gap-4">
+    <div class="flex gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
+      @for (type of movementTypes; track type) {
+      <button (click)="onFilterChange(type)" class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+        [ngClass]="{
+                  'bg-white text-blue-600 shadow-sm border border-slate-200': filterType() === type,
+                  'text-slate-600 hover:bg-slate-200/50': filterType() !== type
+                }">
+        {{ type === 'TODOS' ? 'Todos' : type }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-hidden flex flex-col">
+    @if (!isLoading() && movements().length === 0) {
+    <div
+      class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 flex flex-col items-center justify-center text-slate-500">
+      <mat-icon fontSet="material-symbols-outlined" class="text-4xl mb-2 text-slate-300">receipt_long</mat-icon>
+      <p>No hay movimientos registrados para este tipo.</p>
+    </div>
+    } @else if (movements().length > 0) {
+    <app-custom-table [data]="movements()" [columns]="tableColumns" class="block w-full">
+      <ng-template appTableColumn="movementDate" let-mov>
+        <span class="text-slate-700 font-medium">{{ mov.movementDate | date:'dd/MM/yyyy HH:mm' }}</span>
+      </ng-template>
+
+      <ng-template appTableColumn="movementType" let-mov>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" [ngClass]="{
+                  'bg-emerald-100 text-emerald-700': mov.movementType === 'ENTRADA',
+                  'bg-rose-100 text-rose-700': mov.movementType === 'SALIDA',
+                  'bg-amber-100 text-amber-700': mov.movementType === 'AJUSTE'
+                }">
+          {{ mov.movementType }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableColumn="quantity" let-mov>
+        <span class="font-semibold text-base" [ngClass]="{
+                  'text-emerald-600': mov.movementType === 'ENTRADA',
+                  'text-rose-600': mov.movementType === 'SALIDA',
+                  'text-amber-600': mov.movementType === 'AJUSTE'
+                }">
+          {{ mov.movementType === 'SALIDA' ? '-' : '+' }}{{ mov.quantity }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableColumn="resultingQuantity" let-mov>
+        <span class="font-bold text-slate-800 text-base">
+          {{ mov.resultingQuantity }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableColumn="reason" let-mov>
+        <span class="text-slate-600 max-w-xs truncate block" [title]="mov.reason">
+          {{ mov.reason }}
+        </span>
+      </ng-template>
+
+    </app-custom-table>
+    }
+  </div>
+
+</div>

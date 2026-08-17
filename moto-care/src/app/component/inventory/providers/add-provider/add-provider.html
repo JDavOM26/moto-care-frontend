@@ -1,0 +1,47 @@
+<div class="p-6 md:p-10 animate-fade-in max-w-3xl mx-auto">
+  <div class="mb-8 flex items-center gap-4">
+    <button mat-icon-button routerLink="/ventas/inventario/providers" class="bg-slate-100 hover:bg-slate-200">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="text-3xl font-bold text-[#10152b] m-0">{{ isEditMode ? 'Editar Proveedor' : 'Agregar Nuevo Proveedor' }}</h1>
+      <p class="text-slate-500 m-0 mt-1">{{ isEditMode ? 'Actualiza los datos del proveedor' : 'Completa el formulario para registrar un proveedor en el sistema' }}</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <form [formGroup]="providerGroup">
+      <div class="grid grid-cols-1 gap-6">
+        
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre del Proveedor</mat-label>
+          <input matInput formControlName="name" placeholder="Ej. Repuestos S.A." required>
+          <mat-error *ngIf="providerGroup.get('name')?.hasError('required')">El nombre es obligatorio</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre del Contacto</mat-label>
+          <input matInput formControlName="contactName" placeholder="Ej. Juan Pérez" required>
+          <mat-error *ngIf="providerGroup.get('contactName')?.hasError('required')">El nombre del contacto es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phone" placeholder="Ej. +502 5555 5555" required>
+          <mat-error *ngIf="providerGroup.get('phone')?.hasError('required')">El teléfono es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="Ej. ventas@repuestos.com">
+          <mat-error *ngIf="providerGroup.get('email')?.hasError('email')">Correo no válido</mat-error>
+        </mat-form-field>
+
+      </div>
+      <div class="flex justify-end gap-4 mt-8">
+        <button mat-button routerLink="/ventas/inventario/providers">Cancelar</button>
+        <button mat-flat-button color="primary" (click)="saveProvider()">{{ isEditMode ? 'Actualizar Proveedor' : 'Crear Proveedor' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

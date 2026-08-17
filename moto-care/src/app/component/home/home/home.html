@@ -1,0 +1,15 @@
+<h1>TESTS</h1>
+<div style="margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+  <h2>Prueba de STOMP WebSocket</h2>
+  <button 
+    (click)="enviarSaludo()" 
+    style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    Enviar Saludo
+  </button>
+  <div style="margin-top: 20px;">
+    <strong>Respuesta del Backend:</strong>
+    <p style="background: #f8f9fa; padding: 10px; border-radius: 4px; min-height: 20px;">
+      {{ respuestaBackend }}
+    </p>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="p-6 md:p-10 animate-fade-in">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-[#10152b]">Gestión de Proveedores</h1>
+      <p class="text-slate-500">Administración de proveedores del sistema</p>
+    </div>
+    <button mat-flat-button color="primary" class="!rounded-lg" (click)="openAddProviderDialog()">
+      <mat-icon>add</mat-icon>
+      Nuevo Proveedor
+    </button>
+  </div>
+
+  <app-custom-table [data]="providers()" [columns]="tableColumns" class="block w-full">
+    <ng-template appTableColumn="actions" let-provider>
+      <div class="flex items-center gap-3">
+        <button mat-icon-button class="!w-8 !h-8 bg-blue-500/10 hover:bg-blue-500/20" title="Editar" (click)="editProvider(provider)">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm text-blue-600">edit</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </app-custom-table>
+</div>

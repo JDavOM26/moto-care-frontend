@@ -1,0 +1,101 @@
+<div class="p-4 md:p-6 animate-fade-in flex flex-col h-full max-h-screen">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-[#10152b]">Inventario</h1>
+      <p class="text-sm text-slate-500">Gestión de repuestos y productos</p>
+    </div>
+    <button (click)="openCreateDrawer()"
+      class="bg-[#f97316] hover:bg-[#ea580c] text-white px-5 py-2.5 rounded-lg shadow-sm font-semibold flex items-center gap-2 transition-colors duration-200">
+      <mat-icon fontSet="material-symbols-outlined"
+        class="text-white text-[20px] w-5 h-5 flex items-center justify-center">add_circle</mat-icon>
+      Nuevo Artículo
+    </button>
+  </div>
+
+  <div
+    class="p-4 grid grid-cols-3 gap-2 mx-auto max-w-4xl divide-x-1 divide-slate-400 text-center bg-white rounded-xl shadow-sm border border-slate-100 mb-4">
+
+    <div
+      class="px-2 flex items-center justify-center gap-3 animate-fade-in cursor-pointer transition-transform duration-300 hover:scale-110">
+      <div
+        class="h-12 w-12 rounded-full bg-teal-600 shadow-md shadow-teal-600/30 flex items-center justify-center shrink-0">
+        <img src="stock.png" alt="Stock" class="w-7 h-7 object-contain white-image">
+      </div>
+      <div class="flex flex-col items-start justify-center">
+        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Total Repuestos</span>
+        <span class="text-2xl font-bold text-[#10152b]">{{stats().totalStock}}</span>
+      </div>
+    </div>
+
+
+    <div
+      class="px-2 flex items-center justify-center gap-3 animate-fade-in cursor-pointer transition-transform duration-300 hover:scale-110">
+      <div
+        class="h-12 w-12 rounded-full bg-amber-500 shadow-md shadow-amber-500/30 flex items-center justify-center shrink-0">
+        <img src="down-stock.png" alt="Low Stock" class="w-7 h-7 object-contain white-image">
+      </div>
+      <div class="flex flex-col items-start justify-center">
+        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Stock Bajo</span>
+        <span class="text-2xl font-bold text-[#10152b]">{{stats().lowStock}}</span>
+      </div>
+    </div>
+
+
+    <div
+      class="px-2 flex items-center justify-center gap-3 animate-fade-in cursor-pointer transition-transform duration-300 hover:scale-110">
+      <div
+        class="h-12 w-12 rounded-full bg-rose-600 shadow-md shadow-rose-600/30 flex items-center justify-center shrink-0">
+        <img src="out-of-stock.png" alt="Out of Stock" class="w-7 h-7 object-contain white-image">
+      </div>
+      <div class="flex flex-col items-start justify-center">
+        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Fuera de Stock</span>
+        <span class="text-2xl font-bold text-[#10152b]">{{stats().outOfStock}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pb-4 flex items-center justify-start gap-2">
+
+    <div class="relative w-80">
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <mat-icon fontSet="material-symbols-outlined" class="text-slate-400"
+          style="font-size: 20px; width: 20px; height: 20px;">search</mat-icon>
+      </div>
+      <input type="search" (input)="onSearch($event)"
+        class="block w-full py-2 pl-10 pr-3 text-sm text-[#10152b] border border-slate-300 rounded-lg bg-white focus:ring-1 focus:ring-[#10152b] focus:border-[#10152b] outline-none transition-all placeholder:text-slate-400"
+        placeholder="Buscar repuesto...">
+    </div>
+
+
+    <button mat-icon-button class="text-slate-500 hover:text-[#10152b] transition-colors" title="Filtros"
+      aria-label="Filtrar">
+      <mat-icon fontSet="material-symbols-outlined">filter_list</mat-icon>
+    </button>
+  </div>
+  <app-custom-table [data]="inventories()" [columns]="tableColumns" class="block w-full">
+    <ng-template appTableColumn="actions" let-stock>
+      <div class="flex items-center gap-2">
+        <button mat-icon-button color="primary" class="!w-8 !h-8 bg-blue-500/10 hover:bg-blue-500/20"
+          title="Ver Historial" (click)="openKardexDrawer(stock)">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm">visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" class="!w-8 !h-8 bg-purple-500/10 hover:bg-purple-500/20" title="Editar">
+          <mat-icon (click)="openEditDrawer(stock)" fontSet="material-symbols-outlined" class="text-sm">edit</mat-icon>
+        </button>
+        <button mat-icon-button class="!w-8 !h-8 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600"
+          title="Ajustar Stock" (click)="openAdjustmentDrawer(stock)">
+          <mat-icon fontSet="material-symbols-outlined" class="text-sm">swap_vert</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </app-custom-table>
+
+</div>
+
+
+<app-new-item-drawer [isOpen]="isDrawerOpen()" [itemToEdit]="selectedItem()" (closed)="closeDrawer()">
+</app-new-item-drawer>
+
+<app-stock-adjustment-drawer [isOpen]="isAdjustmentDrawerOpen()" [item]="selectedItem()"
+  (closed)="closeAdjustmentDrawer()">
+</app-stock-adjustment-drawer>
