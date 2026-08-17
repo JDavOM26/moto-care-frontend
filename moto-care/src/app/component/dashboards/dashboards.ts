@@ -31,7 +31,6 @@ export class DashboardsComponent implements OnInit {
       next: (res) => {
         if ((res && res.code === 302) || (res && res.code === 200)) {
           this.financialData.set(res.recordset);
-          // Wait for Angular to render the view with the canvas, then build chart
           setTimeout(() => {
             this.renderChart();
           }, 0);
@@ -112,7 +111,7 @@ export class DashboardsComponent implements OnInit {
     });
     const pieTotals = data.revenueByType.map(item => item.total);
 
-    // Some nice modern colors for the pie chart
+
     const backgroundColors = [
       '#3b82f6', // blue
       '#f97316', // orange
@@ -158,7 +157,7 @@ export class DashboardsComponent implements OnInit {
       if (canvasCurrent) {
         const labels = data.currentOrderStatuses.map(item => item.statusName);
         const totals = data.currentOrderStatuses.map(item => item.total);
-        
+
         const bgColors = ['#3b82f6', '#f97316', '#10b981', '#8b5cf6', '#f43f5e', '#14b8a6', '#eab308'];
 
         new Chart(canvasCurrent, {
@@ -194,7 +193,7 @@ export class DashboardsComponent implements OnInit {
       if (canvasPerf) {
         const labels = data.orderPerformanceStatus.map(item => item.statusName);
         const totals = data.orderPerformanceStatus.map(item => item.total);
-        
+
         new Chart(canvasPerf, {
           type: 'bar',
           data: {

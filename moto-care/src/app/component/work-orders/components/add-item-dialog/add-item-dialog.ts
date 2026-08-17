@@ -55,13 +55,12 @@ export class AddItemDialog implements OnInit {
         if (response.recordset && response.recordset.content) {
           this.inventoryItems = response.recordset.content;
         }
-        
-        // Setup form values AFTER inventory is loaded so that valueChanges listeners can find the items
+
         if (this.isEdit && this.data?.detail) {
           const detail = this.data.detail;
           const type = detail.itemType === 'SERVICE' ? 'servicio' : 'repuesto';
           const isManual = detail.itemType === 'SERVICE' || !detail.idItem;
-          
+
           if (type === 'repuesto' && !isManual) this.activeTabIndex = 0;
           else if (type === 'servicio') this.activeTabIndex = 1;
           else this.activeTabIndex = 2;
@@ -158,7 +157,7 @@ export class AddItemDialog implements OnInit {
   public isOriginalItem(item: StockResponseDto): boolean {
     return this.isEdit && this.data?.detail?.idItem === item.id;
   }
-  
+
   public getSelectedNetStockForItem(item: StockResponseDto): number {
     const available = item.availableQuantity || 0;
     const reserved = item.reservedQuantity || 0;
@@ -166,7 +165,7 @@ export class AddItemDialog implements OnInit {
   }
 
   public onTabChange(index: number): void {
-    if (this.isEdit) return; // Prevent overwriting values when conditionally rendering a single tab
+    if (this.isEdit) return;
 
     if (index === 0) {
       this.itemForm.patchValue({ type: 'repuesto', isManual: false });

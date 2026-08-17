@@ -20,7 +20,7 @@ export interface UserDto {
 })
 export class UserService {
   private readonly http = inject(HttpClient);
-  // Se asume que el endpoint es /employees basado en el backend, o /users si se actualiza.
+
   private readonly url = `${environment.apiUrl}/employees`;
 
   public getAllUsers(pageable?: PageableRequest): Observable<ApiResponse<Page<UserDto>>> {

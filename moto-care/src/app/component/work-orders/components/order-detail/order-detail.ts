@@ -195,7 +195,6 @@ export class OrderDetail implements OnInit {
   public esSiguientePaso(id: number): boolean {
     const currentIdx = this.currentStatusIndex;
     const targetIdx = this.workflowStates.findIndex(s => s.id === id);
-    // Habilitar si es exactamente el siguiente paso
     return targetIdx === currentIdx + 1;
   }
 
@@ -214,13 +213,12 @@ export class OrderDetail implements OnInit {
               this._confirmDialogService.toastSuccess('Estado actualizado');
               this.loadOrderDetails();
               this.loadOrderHistory();
-              // Actualizar el estado de la orden (para reflejar el cambio en la vista si es necesario)
               this._workOrderService.getOrderById(this.orderId).subscribe({
-                  next: (orderRes) => {
-                      if (orderRes && orderRes.code === 200) {
-                          this.order.set(orderRes.recordset);
-                      }
+                next: (orderRes) => {
+                  if (orderRes && orderRes.code === 200) {
+                    this.order.set(orderRes.recordset);
                   }
+                }
               });
             }
           },
